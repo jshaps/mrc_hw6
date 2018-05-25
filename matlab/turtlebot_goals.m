@@ -1,10 +1,15 @@
 % Init
 % Setup ROS with defaults
-rosinit()
+%rosinit()
 
 % Get a list of available actions to see what servers are available
 rosaction list
 
+load('turtlegoals.mat')
+
+set_initialpose(0,0,0);
+
+for i = 1:length(GoalX)
 %% Connect to move_base action server
 % This initiates the client and prints out some diagnostic information
 [client,goalMsg] = rosactionclient('/move_base')
@@ -26,12 +31,7 @@ client.ResultFcn=@(~,res)fprintf('Result received: State: <%s>, StatusText: <%s>
 %% Populate the goal to be sent to the server
 % A good way to determine the syntax is to use tab-complete in the command
 % window
-load('turtlegoals.mat')
 
-% SELF: DON'T FORGET TO ADD LAST POINT TO GOAL ARRAYS! YOU FORGOT THE
-% ORIGIN
-
-for i = 1:length(GoalX)
     
     goalMsg.TargetPose.Header.FrameId = 'map';
     goalMsg.TargetPose.Pose.Position.X = GoalX(i);
@@ -50,7 +50,7 @@ for i = 1:length(GoalX)
 
 % If necessary, cancel the action 
     cancelAllGoals(client)
-    %delete(client) % not sure if we need to delete client every time
+    delete(client) % not sure if we need to delete client every time
 end
 % 
 % %% Shutdown
